@@ -1,0 +1,35 @@
+name: Deploy Frontend to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/pages-frontend.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish frontend to gh-pages branch
+        run: |
+          rm -rf _site
+          mkdir _site
+          cp -r frontend/* _site/
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin gh-pages || true
+          git checkout --orphan gh-pages
+          git rm -rf . || true
+          cp -r _site/* .
+          touch .nojekyll
+          git add -A
+          git commit -m "deploy: pages" || true
+          git push -f origin gh-pages
