@@ -6,6 +6,7 @@ import com.bd.homepage.domain.winner.entity.WinnersSettings;
 import com.bd.homepage.domain.winner.repository.WinnerNameRepository;
 import com.bd.homepage.domain.winner.repository.WinnersSettingsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,20 +50,30 @@ public class WinnerService {
         return WinnerDtos.WinnerNameResponse.from(saved);
     }
 
-    public WinnerDtos.WinnerNameResponse updateName(UUID id, WinnerDtos.WinnerNameUpdateRequest req) {
+    public WinnerDtos.WinnerNameResponse updateName(
+            UUID id,
+            WinnerDtos.WinnerNameUpdateRequest req
+    ) {
         validateName(req.getName());
 
         WinnerName e = winnerNameRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(id + "번 합격자를 찾을 수 없습니다. "));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        id + "번 합격자를 찾을 수 없습니다."
+                ));
 
         e.setName(req.getName().trim());
         e.setOrderIndex(req.getOrderIndex());
         return WinnerDtos.WinnerNameResponse.from(e);
     }
 
+
     public void deleteName(UUID id) {
         if (!winnerNameRepository.existsById(id)) {
-            throw new IllegalArgumentException(id + "번 합격자를 찾을 수 없습니다. ");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    id + "번 합격자를 찾을 수 없습니다."
+            );
         }
         winnerNameRepository.deleteById(id);
     }

@@ -6,8 +6,10 @@ import com.bd.homepage.domain.activity.entity.ActivityCategory;
 import com.bd.homepage.domain.activity.entity.ActivityItem;
 import com.bd.homepage.domain.activity.repository.ActivityItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -44,7 +46,10 @@ public class ActivityItemService {
 
     public ActivityItemResponse update(Long id, ActivityItemRequest req) {
         ActivityItem item = activityItemRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("ActivityItem not found: " + id));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        id + "번 액티비티를 찾을 수 없습니다."
+                ));
 
         item.update(
                 req.getYear(),
@@ -59,9 +64,13 @@ public class ActivityItemService {
         return ActivityItemResponse.from(item);
     }
 
+
     public void delete(Long id) {
         if (!activityItemRepository.existsById(id)) {
-            throw new IllegalArgumentException("ActivityItem not found: " + id);
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    id + "번 액티비티를 찾을 수 없습니다."
+            );
         }
         activityItemRepository.deleteById(id);
     }
