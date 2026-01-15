@@ -2,12 +2,11 @@ package com.bd.homepage;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = UserDetailsServiceAutoConfiguration.class)
 public class HomepageApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(HomepageApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(HomepageApplication.class, args);
+    }
 }

@@ -1,0 +1,13 @@
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+
+admin:
+  password-hash: ${ADMIN_PASSWORD_HASH}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expires-seconds: 3600
+  issuer: bd-home
+server:
+  port: 8080
